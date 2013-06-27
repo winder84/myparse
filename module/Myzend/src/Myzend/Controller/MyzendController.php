@@ -29,27 +29,38 @@ class MyzendController extends AbstractActionController
 	public function indexAction()
 	{
 		$this->logger = new Logger();
-		$writer = new Stream($_SERVER['DOCUMENT_ROOT'] . '/../logs/newproject.log');
+		$writer = new Stream($_SERVER['DOCUMENT_ROOT'] . '/myparse/logs/newproject.log');
 		$this->logger->addWriter($writer);
-		for($pageIndex = 9400;$pageIndex <= $this->allPages;$pageIndex = $pageIndex + 10)
+//		for($pageIndex = 10000;$pageIndex <= $this->allPages;$pageIndex = $pageIndex + 10)
+//		{
+//
+//			$this->aFilms = $this->fetchAllFilmsToArray();
+//			$this->aActor = $this->fetchAllActorsToArray();
+//			$this->parseNewAdress($pageIndex);
+//
+//			if((($pageIndex % 100) == 0) || $pageIndex == $this->allPages)
+//			{
+//				$this->saveFilms();
+//				$this->logger->log(Logger::INFO, 'Фильмы (' . $this->parseFilmsCount . ')');
+//				$this->logger->log(Logger::INFO, 'Актеры (' . $this->parseActorsCount . ')');
+//				$this->logger->log(Logger::INFO, 'Индекс (' . $pageIndex . ')');
+//				$this->films = array();
+//				$this->actorsAll = array();
+//			}
+//		}
+		$html = 'http://video.ru/films/film/12865_Angelyi_nad_Brodveem';
+		$html = file_get_contents($html);
+		$dom = new Query($html);
+		$results = $dom->execute('dt');
+		foreach ($results as $result)
 		{
-
-			$this->aFilms = $this->fetchAllFilmsToArray();
-			$this->aActor = $this->fetchAllActorsToArray();
-			$this->parseNewAdress($pageIndex);
-
-			if((($pageIndex % 100) == 0) || $pageIndex == $this->allPages)
-			{
-				$this->saveFilms();
-				$this->logger->log(Logger::INFO, 'Фильмы (' . $this->parseFilmsCount . ')');
-				$this->logger->log(Logger::INFO, 'Актеры (' . $this->parseActorsCount . ')');
-				$this->logger->log(Logger::INFO, 'Индекс (' . $pageIndex . ')');
-				$this->films = array();
-				$this->actorsAll = array();
-			}
+			$title[] = $result->nodeValue;
+			$href[] = $result->getAttribute('href');
 		}
-
-		$this->aFilms = $this->fetchAllFilmsToArray();
+		echo '<pre>';
+		var_dump($title);
+		var_dump($href);
+		echo '<pre>';		$this->aFilms = $this->fetchAllFilmsToArray();
 		$this->aActor = $this->fetchAllActorsToArray();
 
 		return new ViewModel(array(

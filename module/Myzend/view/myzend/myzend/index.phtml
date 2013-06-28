@@ -1,5 +1,30 @@
+<form action="" method="post" style="margin: 150px auto; width: 500px;">
+	<label><h2 style="text-align: center; cursor: default; color: steelblue; text-shadow: 1px 1px 10px lightblue; font-family: 'Trebuchet MS';">Это не гугол!</h2></label>
+	<input name="searchstring" id="searchstring" type="text" style="margin: 0 auto; width: 500px;" autofocus>
+	<input type="submit" value="Поиск" style="width: 200px; margin: 10px 157px; border-radius: 5px; border: 1px groove lightsteelblue; box-shadow: none; height: 28px; font-family: 'Trebuchet MS';" >
+</form>
+<div style="margin: 0 auto; width: 800px;">
 <?php
-echo '<pre>';
-var_dump($aFilms);
-var_dump($aActor);
-echo '<pre>';
+	if(!empty($aFilms))
+	{
+		echo "<ol style='width: 800px;'>";
+		foreach($aFilms as $key => $film)
+		{
+			/**
+			 * @var $oSphinxClient SphinxClient
+			 */
+			$aRes = $oSphinxClient->BuildExcerpts(array($film['attrs']['title']), 'films', $query);
+			echo "<li><h4 style='font-weight: normal'> {$aRes[0]}</h4>";
+			if($film['attrs']['img'] != '') echo "<img src='{$film['attrs']['img']}'><br><br>";
+			if($film['attrs']['description'] != '') echo $film['attrs']['description'] . "<br><br>";
+			if($film['attrs']['actors'] != '') echo "<span style='color: darkolivegreen;'>Актеры:</span> " . str_replace(',', ', ', $film['attrs']['actors']);
+			echo "</li>";
+			echo "<hr />";
+		};
+		echo "</ol>";
+	}
+?>
+</div>
+
+<!--up-->
+<div style="position: fixed; width: 50px; height: 100%; left: 0; top: 0; cursor: pointer; border-right: 2px groove lightskyblue; opacity: 0;" id="up_button" onclick="goUp();" onmouseover="showUp()" onmouseout="hideUp();"><img src="img/up.png" style="margin-top: 150px;"><img src="img/up.png" style="margin-top: 400px;"></div>

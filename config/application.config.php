@@ -8,7 +8,7 @@
 return array(
     'modules' => array(
         'Application',
-        'Myzend'
+        'Myzend',
         ),
     'module_listener_options' => array(
         'module_paths' => array(

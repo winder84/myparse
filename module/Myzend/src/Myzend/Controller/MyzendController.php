@@ -12,6 +12,7 @@ use Zend\View\Model\ViewModel;
 use Zend\Dom\Query;
 use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
+//use Sphinx\SphinxClient;
 
 class MyzendController extends AbstractActionController
 {
@@ -29,7 +30,7 @@ class MyzendController extends AbstractActionController
 	public function indexAction()
 	{
 		$this->logger = new Logger();
-		$writer = new Stream($_SERVER['DOCUMENT_ROOT'] . '/myparse/logs/newproject.log');
+		$writer = new Stream($_SERVER['DOCUMENT_ROOT'] . '/../logs/newproject.log');
 		$this->logger->addWriter($writer);
 //		for($pageIndex = 10000;$pageIndex <= $this->allPages;$pageIndex = $pageIndex + 10)
 //		{
@@ -48,25 +49,39 @@ class MyzendController extends AbstractActionController
 //				$this->actorsAll = array();
 //			}
 //		}
-		$html = 'http://video.ru/films/film/12865_Angelyi_nad_Brodveem';
-		$html = file_get_contents($html);
-		$dom = new Query($html);
-		$results = $dom->execute('dt');
-		foreach ($results as $result)
-		{
-			$title[] = $result->nodeValue;
-			$href[] = $result->getAttribute('href');
-		}
-		echo '<pre>';
-		var_dump($title);
-		var_dump($href);
-		echo '<pre>';		$this->aFilms = $this->fetchAllFilmsToArray();
-		$this->aActor = $this->fetchAllActorsToArray();
 
-		return new ViewModel(array(
-			'aFilms' => count($this->aFilms),
-			'aActor' => count($this->aActor),
-		));
+		// Искомая комбинация
+
+		require_once($_SERVER['DOCUMENT_ROOT'].'/../vendor/Sphinx/SphinxClient.php');
+		$sphinx = new \SphinxClient();
+		$sphinx->SetLimits(0, 20);
+		if(isset($_REQUEST['searchstring']) && $_REQUEST['searchstring'] != '')
+		{
+			$string = $_REQUEST['searchstring'];
+		} else {
+			$string = null;
+		}
+		if(isset($string))
+		{
+			$result = $sphinx->Query($string, 'films');
+		}
+
+		if(isset($result))
+		{
+			$aView ['aFilms'] = $result['matches'];
+		}
+
+		if(isset($string))
+		{
+			$aView ['query'] = $string;
+		}
+
+		if(isset($sphinx))
+		{
+			$aView ['oSphinxClient'] = $sphinx;
+		}
+
+		return new ViewModel($aView);
 	}
 
 	public function getMyzendTable()

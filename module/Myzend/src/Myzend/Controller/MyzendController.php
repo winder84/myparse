@@ -30,8 +30,8 @@ class MyzendController extends AbstractActionController
 	public function indexAction()
 	{
 		$this->logger = new Logger();
-		$writer = new Stream($_SERVER['DOCUMENT_ROOT'] . '/../logs/newproject.log');
-		$this->logger->addWriter($writer);
+//		$writer = new Stream($_SERVER['DOCUMENT_ROOT'] . '/../logs/newproject.log');
+//		$this->logger->addWriter($writer);
 //		for($pageIndex = 10000;$pageIndex <= $this->allPages;$pageIndex = $pageIndex + 10)
 //		{
 //
@@ -52,7 +52,7 @@ class MyzendController extends AbstractActionController
 
 		// Искомая комбинация
 
-		require_once($_SERVER['DOCUMENT_ROOT'].'/../vendor/Sphinx/SphinxClient.php');
+		require_once($_SERVER['DOCUMENT_ROOT'].'/../Sphinx/SphinxClient.php');
 		$sphinx = new \SphinxClient();
 		$sphinx->SetLimits(0, 20);
 		if(isset($_REQUEST['searchstring']) && $_REQUEST['searchstring'] != '')
